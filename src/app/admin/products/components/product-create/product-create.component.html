@@ -7,14 +7,18 @@
       <div class="row">
         <div class="col-xs">
           <mat-form-field>
-            <input placeholder="Id" formControlName="id" matInput type="text">
+            <input placeholder="Title" formControlName="title" matInput type="text">
           </mat-form-field>
         </div>
       </div>
       <div class="row">
         <div class="col-xs">
           <mat-form-field>
-            <input placeholder="Title" formControlName="title" matInput type="text">
+            <mat-label>Categorías</mat-label>
+            <mat-select formControlName="categoryId">
+              <mat-option *ngFor="let category of categories" [value]="category">{{category.name}}</mat-option>
+
+            </mat-select>
           </mat-form-field>
         </div>
       </div>
@@ -39,7 +43,13 @@
       <div class="row">
         <div class="col-xs">
           <img *ngIf="(image$ | async) as image" [src]="image" alt="">
-          <input type="file" (change)="uploadFile($event)">
+          <input type="file" (change)="uploadFile($event)" multiple>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs">
+        <app-stepper formControlName="stock"></app-stepper>
         </div>
       </div>
     </mat-card-content>

@@ -25,6 +25,17 @@
         <div class="row">
           <div class="col-xs">
             <mat-form-field>
+              <mat-label>Categorías</mat-label>
+              <mat-select formControlName="category">
+                <mat-option *ngFor="let category of categories" [value]="category">{{category.name}}</mat-option>
+  
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs">
+            <mat-form-field>
               <textarea placeholder="Text" formControlName="description" matInput></textarea>
             </mat-form-field>
           </div>

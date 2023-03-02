@@ -9,6 +9,8 @@ import { MyValidators } from './../../../../utils/validators';
 import { ProductsService } from './../../../../core/services/products/products.service';
 
 import { Observable } from 'rxjs';
+import { CategoriesService } from '../../../../core/services/categories.service';
+import { Category } from '../../../../core/models/category.model';
 
 @Component({
   selector: 'app-product-create',
@@ -19,17 +21,19 @@ export class ProductCreateComponent implements OnInit {
 
   form: FormGroup;
   image$: Observable<any>;
-
+  categories: Category[] = [];
   constructor(
     private formBuilder: FormBuilder,
     private productsService: ProductsService,
     private router: Router,
-    private storage: AngularFireStorage
+    private storage: AngularFireStorage,
+    private categoriesService: CategoriesService
   ) {
     this.buildForm();
   }
 
   ngOnInit() {
+    this.getCategories();
   }
 
   saveProduct(event: Event) {
@@ -45,6 +49,7 @@ export class ProductCreateComponent implements OnInit {
   }
 
   uploadFile(event) {
+    console.log(event)
     const file = event.target.files[0];
     const name = 'image.png';
     const fileRef = this.storage.ref(name);
@@ -55,8 +60,7 @@ export class ProductCreateComponent implements OnInit {
       finalize(() => {
         this.image$ = fileRef.getDownloadURL();
         this.image$.subscribe(url => {
-          console.log(url);
-          this.form.get('image').setValue(url);
+          this.form.get('images').setValue([url]);
         });
       })
     )
@@ -65,16 +69,28 @@ export class ProductCreateComponent implements OnInit {
 
   private buildForm() {
     this.form = this.formBuilder.group({
-      id: ['', [Validators.required]],
-      title: ['', [Validators.required]],
+      title: ['', [Validators.required, Validators.minLength(4)]],
+      categoryId: ['', Validators.required],
       price: ['', [Validators.required, MyValidators.isPriceValid]],
-      image: [''],
-      description: ['', [Validators.required]],
+      images: [''],
+      description: ['', [Validators.required, Validators.minLength(10)]],
+      stock: [55, Validators.required]
     });
+
+    this.form.get('stock').valueChanges.subscribe(value=>{
+      console.log(value)
+    })
   }
 
   get priceField() {
     return this.form.get('price');
+  }
+
+  private getCategories(){
+    this.categoriesService.getAllCategories().subscribe(data=>{
+      this.categories = data;
+      console.log(data)
+    })
   }
 
 }
